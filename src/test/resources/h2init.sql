@@ -1,0 +1,7 @@
+SET COLLATION english STRENGTH PRIMARY;
+
+CREATE TABLE simple_entity (
+    id NVARCHAR(255) NOT NULL,
+    data NVARCHAR(255) NOT NULL
+);
+

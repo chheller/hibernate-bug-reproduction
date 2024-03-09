@@ -49,14 +49,14 @@ class HibernateBugReproApplicationTests {
 	}
 
 	@Test
-	@Disabled("This isn't as easy to reproduce for some reason")
-	void shouldUpdateButThrows() throws Exception {
+	@Disabled("Not currently reproducing")
+	void shouldUpdateButThrows() {
 		SimpleEntity initialEntity = new SimpleEntity("TEST", 1, "foo");
 		simpleService.createSimpleEntity(initialEntity);
 		// Changing id to be identical, beside casing (assuming the database is case insensitive too)
 		SimpleEntity newEntity = new SimpleEntity("test", 1, "bar");
-		Assertions.assertThrows(Exception.class, () -> simpleService.updateSimpleEntity(List.of(newEntity)));
-		// This shouldn't be null, but it is. The previous row does exist, but is deleted by the service but not saved after
 
+		// This throws "identifier of an instance of was altered from SimpleEntityPK(id="TEST" ...) to SimpleEntityPK=(id="test" ...)
+		Assertions.assertThrows(Exception.class, () -> simpleService.updateSimpleEntity(List.of(newEntity)));
 	}
 }

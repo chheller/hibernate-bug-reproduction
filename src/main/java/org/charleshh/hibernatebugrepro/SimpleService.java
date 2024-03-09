@@ -4,36 +4,40 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class SimpleService {
     private final SimpleRepository simpleRepository;
 
-    Optional<SimpleEntity> getSimpleEntity(String id) {
-        return simpleRepository.findById(id);
+    List<SimpleEntity> getSimpleEntities(String id) {
+        return simpleRepository.findAllEntitiesById(List.of(id));
+    }
+
+    List<SimpleEntity> getSimpleEntities(List<String> ids) {
+        return simpleRepository.findAllEntitiesById(ids);
     }
     @Transactional
     void createSimpleEntity(SimpleEntity entity) {
         simpleRepository.save(entity);
     }
     @Transactional
-    void updateByDeleteSimpleEntity(SimpleEntity entity) throws Exception {
-        Optional<SimpleEntity> foundEntity = simpleRepository.findById(entity.getId());
-        if (foundEntity.isPresent()) {
-            simpleRepository.delete(foundEntity.get());
-            simpleRepository.save(entity);
+    void updateByDeleteSimpleEntity(List<SimpleEntity> entities) throws Exception {
+        List<SimpleEntity> foundEntities = simpleRepository.findAllEntitiesById(entities.stream().map(SimpleEntity::getId).toList());
+        if (!foundEntities.isEmpty()) {
+            simpleRepository.deleteAll(foundEntities);
+            simpleRepository.saveAll(entities);
         } else {
             throw new Exception("Entity not found");
         }
     }
 
     @Transactional
-    void updateSimpleEntity(SimpleEntity entity) throws Exception {
-        Optional<SimpleEntity> foundEntity = simpleRepository.findById(entity.getId());
-        if (foundEntity.isPresent()) {
-            simpleRepository.save(entity);
+    void updateSimpleEntity(List<SimpleEntity> entities) throws Exception {
+        List<SimpleEntity> foundEntity =  simpleRepository.findAllEntitiesById(entities.stream().map(SimpleEntity::getId).toList());
+        if (!foundEntity.isEmpty()) {
+            simpleRepository.saveAll(entities);
         } else {
             throw new Exception("Entity not found");
         }

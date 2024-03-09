@@ -24,7 +24,8 @@ public class SimpleService {
     }
     @Transactional
     void updateByDeleteSimpleEntity(List<SimpleEntity> entities) throws Exception {
-        List<SimpleEntity> foundEntities = simpleRepository.findAllEntitiesById(entities.stream().map(SimpleEntity::getId).toList());
+        SimpleEntity firstEntity = entities.getFirst();
+        List<SimpleEntity> foundEntities = simpleRepository.findByIdAndOtherId(firstEntity.getId(), firstEntity.getOtherId());
         if (!foundEntities.isEmpty()) {
             simpleRepository.deleteAll(foundEntities);
             simpleRepository.saveAll(entities);
@@ -35,8 +36,9 @@ public class SimpleService {
 
     @Transactional
     void updateSimpleEntity(List<SimpleEntity> entities) throws Exception {
-        List<SimpleEntity> foundEntity =  simpleRepository.findAllEntitiesById(entities.stream().map(SimpleEntity::getId).toList());
-        if (!foundEntity.isEmpty()) {
+        SimpleEntity firstEntity = entities.getFirst();
+        List<SimpleEntity> foundEntities = simpleRepository.findByIdAndOtherId(firstEntity.getId(), firstEntity.getOtherId());
+        if (!foundEntities.isEmpty()) {
             simpleRepository.saveAll(entities);
         } else {
             throw new Exception("Entity not found");
